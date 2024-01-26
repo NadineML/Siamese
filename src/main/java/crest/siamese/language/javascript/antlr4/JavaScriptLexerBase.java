@@ -29,28 +29,26 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 package crest.siamese.language.javascript.antlr4;
 
-
 import crest.siamese.language.javascript.JavaScriptLexer;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.Token;
 
 import java.util.Stack;
+import org.antlr.v4.runtime.*;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * All lexer methods that used in grammar (IsStrictMode)
  * should start with Upper Case Char similar to Lexer rules.
  */
-public abstract class JavaScriptLexerBase extends Lexer
-{
+public abstract class JavaScriptLexerBase extends Lexer {
     /**
      * Stores values of nested modes. By default mode is strict or
      * defined externally (useStrictDefault)
      */
-    private Stack<Boolean> scopeStrictModes = new Stack<Boolean>();
+    private final Deque<Boolean> scopeStrictModes = new ArrayDeque<>();
 
     private Token lastToken = null;
     /**
@@ -60,9 +58,20 @@ public abstract class JavaScriptLexerBase extends Lexer
     private boolean useStrictDefault = false;
     /**
      * Current value of strict mode
-     * Can be defined during parsing, see StringFunctions.js and StringGlobal.js samples
+     * Can be defined during parsing, see StringFunctions.js and StringGlobal.js
+     * samples
      */
     private boolean useStrictCurrent = false;
+    /**
+     * Keeps track of the the current depth of nested template string backticks.
+     * E.g. after the X in:
+     *
+     * `${a ? `${X
+     *
+     * templateDepth will be 2. This variable is needed to determine if a `}` is a
+     * plain CloseBrace, or one that closes an expression inside a template string.
+     */
+    private int templateDepth = 0;
 
     public JavaScriptLexerBase(CharStream input) {
         super(input);
@@ -83,6 +92,10 @@ public abstract class JavaScriptLexerBase extends Lexer
 
     public boolean IsStrictMode() {
         return useStrictCurrent;
+    }
+
+    public boolean IsInTemplateString() {
+        return this.templateDepth > 0;
     }
 
     /**
@@ -106,30 +119,33 @@ public abstract class JavaScriptLexerBase extends Lexer
         return next;
     }
 
-    protected void ProcessOpenBrace()
-    {
+    protected void ProcessOpenBrace() {
         useStrictCurrent = scopeStrictModes.size() > 0 && scopeStrictModes.peek() ? true : useStrictDefault;
         scopeStrictModes.push(useStrictCurrent);
     }
 
-    protected void ProcessCloseBrace()
-    {
+    protected void ProcessCloseBrace() {
         useStrictCurrent = scopeStrictModes.size() > 0 ? scopeStrictModes.pop() : useStrictDefault;
     }
 
-    protected void ProcessStringLiteral()
-    {
-        if (lastToken == null || lastToken.getType() == JavaScriptLexer.OpenBrace)
-        {
+    protected void ProcessStringLiteral() {
+        if (lastToken == null || lastToken.getType() == JavaScriptLexer.OpenBrace) {
             String text = getText();
-            if (text.equals("\"use strict\"") || text.equals("'use strict'"))
-            {
+            if (text.equals("\"use strict\"") || text.equals("'use strict'")) {
                 if (scopeStrictModes.size() > 0)
                     scopeStrictModes.pop();
                 useStrictCurrent = true;
                 scopeStrictModes.push(useStrictCurrent);
             }
         }
+    }
+
+    public void IncreaseTemplateDepth() {
+        this.templateDepth++;
+    }
+
+    public void DecreaseTemplateDepth() {
+        this.templateDepth--;
     }
 
     /**
@@ -162,5 +178,15 @@ public abstract class JavaScriptLexerBase extends Lexer
                 // In all other cases, a regex literal _is_ possible.
                 return true;
         }
+    }
+
+    @Override
+    public void reset() {
+        this.scopeStrictModes.clear();
+        this.lastToken = null;
+        this.useStrictDefault = false;
+        this.useStrictCurrent = false;
+        this.templateDepth = 0;
+        super.reset();
     }
 }
