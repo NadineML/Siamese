@@ -58,7 +58,7 @@ public abstract class JavaScriptLexerBase extends Lexer {
      * Can be defined during parsing, see StringFunctions.js and StringGlobal.js
      * samples
      */
-    private boolean useStrictCurrent = false;*
+    private boolean useStrictCurrent = false;
     /**
      * Keeps track of the the current depth of nested template string backticks.
      * E.g. after the X in:
