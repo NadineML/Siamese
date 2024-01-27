@@ -7,14 +7,14 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
 
-import crest.siamese.language.javascript.antlr4.JavaScriptLexerBase;
+import crest.siamese.language.javascript.antlr4.JavaScriptParserBase;
 
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
 @SuppressWarnings({ "all", "warnings", "unchecked", "unused", "cast" })
-public class JavaScriptParser extends JavaScriptLexerBase {
+public class JavaScriptParser extends JavaScriptParserBase {
 	static {
 		RuntimeMetaData.checkVersion("4.7", RuntimeMetaData.VERSION);
 	}

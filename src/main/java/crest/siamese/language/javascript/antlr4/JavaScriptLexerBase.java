@@ -35,7 +35,6 @@ import crest.siamese.language.javascript.JavaScriptLexer;
 
 import java.util.Stack;
 import org.antlr.v4.runtime.*;
-
 import java.util.ArrayDeque;
 import java.util.Deque;
 
