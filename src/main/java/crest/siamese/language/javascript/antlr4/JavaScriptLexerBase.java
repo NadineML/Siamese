@@ -1,3 +1,4 @@
+package crest.siamese.language.javascript.antlr4;
 /*
  * The MIT License (MIT)
  *
@@ -29,8 +30,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
-
 import java.util.Stack;
 
 import org.antlr.v4.runtime.*;
@@ -43,7 +42,8 @@ import java.util.Deque;
  */
 public abstract class JavaScriptLexerBase extends Lexer {
     /**
-     * Stores values of nested modes. By default mode i      * defined externally (useStrictDefault)
+     * Stores values of nested modes. By default mode i * defined externally
+     * (useStrictDefault)
      */
     private final Deque<Boolean> scopeStrictModes = new ArrayDeque<>();
 
@@ -58,8 +58,7 @@ public abstract class JavaScriptLexerBase extends Lexer {
      * Can be defined during parsing, see StringFunctions.js and StringGlobal.js
      * samples
      */
-    private boolean useStrictCurrent = false;
-     * 
+    private boolean useStrictCurrent = false;*
     /**
      * Keeps track of the the current depth of nested template string backticks.
      * E.g. after the X in:
@@ -105,19 +104,24 @@ public abstract class JavaScriptLexerBase extends Lexer {
      *
      * @return the next token from the character stream.
      */
-    @Override public Token nextToken() {
+    @Override
+    public Token nextToken() {
         Token next = super.nextToken();
 
         if (next.getChannel() == Token.DEFAULT_CHANNEL) {
             // Keep track of the last token on the default channel.
-            this.lastToken = next;     }
+            this.lastToken = next;
+        }
 
         return next;
     }
- protected void ProcessOpenBrace() {
-        useStrictCurrent = scopeStrictModes.size() > 0 && scopeStrictModes.peek()  scopeStrictModes.push(useStrictCurrent);
+
+    protected void ProcessOpenBrace() {
+        useStrictCurrent = scopeStrictModes.size() > 0 && scopeStrictModes.peek();
+        scopeStrictModes.push(useStrictCurrent);
     }
- d void ProcessCloseBrace() {
+
+    void ProcessCloseBrace() {
         useStrictCurrent = scopeStrictModes.size() > 0 ? scopeStrictModes.pop() : useStrictDefault;
     }
 
