@@ -29,11 +29,10 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package crest.siamese.language.javascript.antlr4;
 
-import crest.siamese.language.javascript.JavaScriptLexer;
 
 import java.util.Stack;
+
 import org.antlr.v4.runtime.*;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -44,8 +43,7 @@ import java.util.Deque;
  */
 public abstract class JavaScriptLexerBase extends Lexer {
     /**
-     * Stores values of nested modes. By default mode is strict or
-     * defined externally (useStrictDefault)
+     * Stores values of nested modes. By default mode i      * defined externally (useStrictDefault)
      */
     private final Deque<Boolean> scopeStrictModes = new ArrayDeque<>();
 
@@ -61,6 +59,7 @@ public abstract class JavaScriptLexerBase extends Lexer {
      * samples
      */
     private boolean useStrictCurrent = false;
+     * 
     /**
      * Keeps track of the the current depth of nested template string backticks.
      * E.g. after the X in:
@@ -106,24 +105,19 @@ public abstract class JavaScriptLexerBase extends Lexer {
      *
      * @return the next token from the character stream.
      */
-    @Override
-    public Token nextToken() {
+    @Override public Token nextToken() {
         Token next = super.nextToken();
 
         if (next.getChannel() == Token.DEFAULT_CHANNEL) {
             // Keep track of the last token on the default channel.
-            this.lastToken = next;
-        }
+            this.lastToken = next;     }
 
         return next;
     }
-
-    protected void ProcessOpenBrace() {
-        useStrictCurrent = scopeStrictModes.size() > 0 && scopeStrictModes.peek() ? true : useStrictDefault;
-        scopeStrictModes.push(useStrictCurrent);
+ protected void ProcessOpenBrace() {
+        useStrictCurrent = scopeStrictModes.size() > 0 && scopeStrictModes.peek()  scopeStrictModes.push(useStrictCurrent);
     }
-
-    protected void ProcessCloseBrace() {
+ d void ProcessCloseBrace() {
         useStrictCurrent = scopeStrictModes.size() > 0 ? scopeStrictModes.pop() : useStrictDefault;
     }
 
